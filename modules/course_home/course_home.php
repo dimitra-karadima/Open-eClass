@@ -59,7 +59,7 @@ function confirmation ()
 ';
 
 //For statistics: record login
-$sql_log = "INSERT INTO logins SET user_id='$uid', ip='$REMOTE_ADDR', date_time=NOW()";
+$sql_log = "INSERT INTO logins SET user_id='".mysql_real_escape_string($uid)."', ip='".mysql_real_escape_string($REMOTE_ADDR)."', date_time=NOW()";
 db_query($sql_log, $currentCourse);
 include '../../include/action.php';
 $action = new action();
@@ -99,7 +99,7 @@ if (!empty($addon)) {
 	$main_content .= "\n      <div class='course_info'><h1>$langCourseAddon</h1><p>$addon</p></div>";
 }
 
-$result = db_query("SELECT MAX(`order`) FROM course_units WHERE course_id = $cours_id");
+$result = db_query("SELECT MAX(`order`) FROM course_units WHERE course_id = '".mysql_real_escape_string($cours_id)."'");
 list($maxorder) = mysql_fetch_row($result);
 
 // other actions in course unit
@@ -110,15 +110,15 @@ if ($is_adminOfCourse) {
                 if (isset($_REQUEST['unit_id'])) { // update course unit
                         $unit_id = intval($_REQUEST['unit_id']);
                         $result = db_query("UPDATE course_units SET
-                                                   title = $title,
-                                                   comments = $descr
-                                            WHERE id = $unit_id AND course_id = $cours_id");
+                                                   title = '".mysql_real_escape_string($title)."',
+                                                   comments = '".mysql_real_escape_string($descr)."'
+                                            WHERE id = '".mysql_real_escape_string($unit_id)."' AND course_id = '".mysql_real_escape_string($cours_id)."'");
 		        $main_content .= "\n      <p class='success_small'>$langCourseUnitModified</p>";
                 } else { // add new course unit
                         $order = $maxorder + 1;
                         db_query("INSERT INTO course_units SET
-                                         title = $title, comments =  $descr,
-                                         `order` = $order, course_id = $cours_id");
+                                         title = '".mysql_real_escape_string($title)."', comments =  '".mysql_real_escape_string($descr)."',
+                                         `order` = '".mysql_real_escape_string($order)."', course_id = '".mysql_real_escape_string($cours_id)."'");
 		        $main_content .= "\n        <p class='success_small'>$langCourseUnitAdded</p>";
                 }
         } elseif (isset($_REQUEST['del'])) { // delete course unit
@@ -128,7 +128,7 @@ if ($is_adminOfCourse) {
 		$main_content .= "<p class='success_small'>$langCourseUnitDeleted</p>";
 	} elseif (isset($_REQUEST['vis'])) { // modify visibility
 		$id = intval($_REQUEST['vis']);
-		$sql = db_query("SELECT `visibility` FROM course_units WHERE id='$id'");
+		$sql = db_query("SELECT `visibility` FROM course_units WHERE id='".mysql_real_escape_string($id)."'");
 		list($vis) = mysql_fetch_row($sql);
 		$newvis = ($vis == 'v')? 'i': 'v';
 		db_query("UPDATE course_units SET visibility = '$newvis' WHERE id = $id AND course_id = $cours_id");
@@ -158,14 +158,14 @@ if ($is_adminOfCourse) {
         $cunits_content .= "</td>\n      </tr>\n      </thead>\n      </table>\n";
 if ($is_adminOfCourse) {
         list($last_id) = mysql_fetch_row(db_query("SELECT id FROM course_units
-                                                   WHERE course_id = $cours_id
+                                                   WHERE course_id = '".mysql_real_escape_string($cours_id)."'
                                                    ORDER BY `order` DESC LIMIT 1"));
 	$query = "SELECT id, title, comments, visibility
-		  FROM course_units WHERE course_id = $cours_id
+		  FROM course_units WHERE course_id = '".mysql_real_escape_string($cours_id)."'
                   ORDER BY `order`";
 } else {
 	$query = "SELECT id, title, comments, visibility
-		  FROM course_units WHERE course_id = $cours_id AND visibility='v'
+		  FROM course_units WHERE course_id = '".mysql_real_escape_string($cours_id)."' AND visibility='v'
                   ORDER BY `order`";
 }
 $sql = db_query($query);
@@ -258,7 +258,7 @@ $helpTopic = 'course_home';
 if ($is_adminOfCourse) {
 	$sql = "SELECT COUNT(user_id) AS numUsers
 			FROM cours_user
-			WHERE cours_id = $cours_id";
+			WHERE cours_id = '".mysql_real_escape_string($cours_id)."'";
 	$res = db_query($sql, $mysqlMainDb);
 	while($result = mysql_fetch_row($res)) {
 		$numUsers = $result[0];

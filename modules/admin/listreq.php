@@ -93,12 +93,12 @@ switch ($show) {
       </div>";
 
 // -----------------------------------
-// display closed requests 
+// display closed requests
 // ----------------------------------
 if (!empty($show) && ($show=="closed")) {
 	if (!empty($id) && ($id>0)) {
 		// restore request
-		$sql = db_query("UPDATE prof_request set status='1', date_closed=NULL WHERE rid='$id'");
+		$sql = db_query("UPDATE prof_request set status='1', date_closed=NULL WHERE rid='".mysql_real_escape_string($id)."'");
 		$tool_content = "<p class=\"success_small\">$langReintroductionApplication</p>";
 	} else {
 		$tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">";
@@ -107,7 +107,7 @@ if (!empty($show) && ($show=="closed")) {
  		$sql = db_query("SELECT rid,profname,profsurname,profuname,profemail,proftmima,
 				profcomm,date_open,date_closed,comment
 				FROM prof_request
-                                WHERE (status = 2 AND statut = $list_statut)");
+                                WHERE (status = 2 AND statut = '".mysql_real_escape_string($list_statut)."')");
         	$k = 0;
 		while ($req = mysql_fetch_array($sql)) {
 			if ($k%2 == 0) {
@@ -141,12 +141,12 @@ if (!empty($show) && ($show=="closed")) {
 	$tool_content .= "\n  </tbody>\n  </table>\n";
 
 // -----------------------------------
-// display rejected requests 
+// display rejected requests
 // ----------------------------------
 } elseif (!empty($show) && ($show=="rejected")) {
 	if (!empty($id) && ($id>0)) {
 	// restore request
-		$sql = db_query("UPDATE prof_request set status='1', date_closed=NULL WHERE rid='$id'");
+		$sql = db_query("UPDATE prof_request set status='1', date_closed=NULL WHERE rid='".mysql_real_escape_string($id)."'");
 		$tool_content = "<table><tbody><tr>
 		<td class=\"success\">$langReintroductionApplication</td></tr></tbody></table>";
 	} else {
@@ -157,7 +157,7 @@ if (!empty($show) && ($show=="closed")) {
  		$sql = db_query("SELECT rid,profname,profsurname,profuname,profemail,
 				proftmima,profcomm,date_open,date_closed,comment
 				FROM prof_request
-                                WHERE (status = 3 AND statut = $list_statut)");
+                                WHERE (status = 3 AND statut = '".mysql_real_escape_string($list_statut)."')");
 
         	$k = 0;
 		while ($req = mysql_fetch_array($sql)) {
@@ -203,7 +203,7 @@ if (!empty($show) && ($show=="closed")) {
  	$sql = db_query("SELECT rid,profname,profsurname,profuname,profemail,proftmima,
 			profcomm,date_open,date_closed,comment
 			FROM prof_request
-                        WHERE (status = 0 AND statut = $list_statut)");
+                        WHERE (status = 0 AND statut = '".mysql_real_escape_string($list_statut)."')");
 
     	$k = 0;
 	for ($j = 0; $j < mysql_num_rows($sql); $j++) {
@@ -238,7 +238,7 @@ if (!empty($show) && ($show=="closed")) {
 } elseif(!empty($close)) {
 	switch($close) {
 	case '1':
-		$sql = db_query("UPDATE prof_request set status='2', date_closed=NOW() WHERE rid='$id'");
+		$sql = db_query("UPDATE prof_request set status='2', date_closed=NOW() WHERE rid='".mysql_real_escape_string($id)."'");
                 if ($list_statut == 1) {
         		$tool_content .= "<p><center>$langProfessorRequestClosed</p>";
                 } else {
@@ -253,7 +253,7 @@ if (!empty($show) && ($show=="closed")) {
 				$sql = "UPDATE prof_request set status = '3',
 						date_closed = NOW(),
 						comment = '".mysql_escape_string($comment)."'
-						WHERE rid = '$id'";
+						WHERE rid = '".mysql_real_escape_string($id)."'";
 				if (db_query($sql)) {
 					if (isset($sendmail) and ($sendmail == 1)) {
 						$emailsubject = $langemailsubjectBlocked;
@@ -273,7 +273,7 @@ $langEmail: $emailhelpdesk";
 		} else {
 			// display the form
 			$r = db_query("SELECT comment, profname, profsurname, profemail, statut
-				FROM prof_request WHERE rid = '$id'");
+				FROM prof_request WHERE rid = '".mysql_real_escape_string($id)."'");
 			$d = mysql_fetch_assoc($r);
                         $warning = ($d['statut'] == 5)? $langWarnReject: $langGoingRejectRequest;
 			$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
@@ -319,10 +319,10 @@ else
 	$tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">";
 	$tool_content .= table_header();
 	$tool_content .= "<tbody>";
- 	$sql = db_query("SELECT rid,profname,profsurname,profuname,profemail,proftmima, 
+ 	$sql = db_query("SELECT rid,profname,profsurname,profuname,profemail,proftmima,
 			profcomm, date_open, comment, profpassword, lang
 			FROM prof_request
-                        WHERE (status = 1 AND statut = $list_statut)");
+                        WHERE (status = 1 AND statut = '".mysql_real_escape_string($list_statut)."')");
     	$k = 0;
 	while ($req = mysql_fetch_array($sql)) {
 		if ($k%2 == 0) {
@@ -387,13 +387,13 @@ draw($tool_content, 3, null, $head_content);
 // --------------------------------------
 
 function table_header($addon = FALSE, $message = FALSE) {
-	
+
 	global $langName, $langSurname, $langUsername, $langEmail, $langFaculty, $langTel;
 	global $langDate, $langComments, $langActions;
 	global $langDateRequest_small;
 
 	$string = "";
-	if ($addon) { 
+	if ($addon) {
 		$rowspan=2;
 		$datestring = "<th align='center' colspan='2'>$langDate</th>
 		<th scope='col' rowspan='$rowspan' align='center'>$langComments</th>
@@ -414,7 +414,7 @@ function table_header($addon = FALSE, $message = FALSE) {
 	<th scope='col' rowspan='$rowspan' class='left'>$langEmail</th>
 	<th scope='col' rowspan='$rowspan' class='left'>$langFaculty</th>
 	<th scope='col' rowspan='$rowspan' align='center'>$langTel</th>";
-	$string .= $datestring; 
+	$string .= $datestring;
 	$string .= "</tr></thead>";
 
 return $string;

@@ -106,11 +106,11 @@ if (isset($search) && $search=="yes") {
 	}
 	$query=join(' AND ',$searchcours);
 	if (!empty($query)) {
-		$sql=mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
-			WHERE $query ORDER BY faculte");
+		$sql=mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours
+			WHERE '".mysql_real_escape_string($query)."' ORDER BY faculte");
 		$caption .= "$langFound ".mysql_num_rows($sql)." $langCourses ";
 	} else {
-		$sql=mysql_query("SELECT faculte, code, intitule,titulaires, visible, cours_id FROM cours 
+		$sql=mysql_query("SELECT faculte, code, intitule,titulaires, visible, cours_id FROM cours
 				ORDER BY faculte");
 		$caption .= "$langFound ".mysql_num_rows($sql)." $langCourses ";
 	}
@@ -119,7 +119,7 @@ if (isset($search) && $search=="yes") {
 else {
 	$a=mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM cours"));
 	$caption .= "".$langManyExist.": <b>".$a[0]." $langCourses</b>";
-	$sql = mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
+	$sql = mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours
 			ORDER BY faculte,code LIMIT ".$limit.",".$listsize."");
 
 	if ($fulllistsize > $listsize ) {

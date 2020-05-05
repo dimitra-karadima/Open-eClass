@@ -80,7 +80,7 @@ include("functions.php"); // application logic for phpBB
  *****************************************************************************/
 
 $sql = "SELECT forum_name, forum_access, forum_type FROM forums
-	WHERE (forum_id = '$forum')";
+	WHERE (forum_id = '".mysql_real_escape_string($_GET['$forum'])."')";
 if (!$result = db_query($sql, $currentCourseID)) {
 	$tool_content .= $langErrorDataForum;
 	draw($tool_content, 2, 'phpbb', $head_content);
@@ -111,7 +111,7 @@ if (isset($submit) && $submit) {
 	if (!isset($username)) {
 		$username = $langAnonymous;
 	}
-	
+
 	if($forum_access == 3 && $user_level < 2) {
 		$tool_content .= $langNoPost;
 		draw($tool_content, 2, 'phpbb', $head_content);
@@ -145,12 +145,12 @@ if (isset($submit) && $submit) {
 		$message .= "\n[addsig]";
 	}
 	$sql = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
-			VALUES (" . autoquote($subject) . ", '$uid', '$forum', '$time', 1, '$nom', '$prenom')";
+			VALUES (" . autoquote($subject) . ", '$uid', '".mysql_real_escape_string($forum)."', '$time', 1, '$nom', '$prenom')";
 	$result = db_query($sql, $currentCourseID);
 
 	$topic_id = mysql_insert_id();
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic_id', '$forum', '$uid', '$time', '$poster_ip', '$nom', '$prenom')";
+			VALUES ('$topic_id', '".mysql_real_escape_string($forum)."', '$uid', '$time', '$poster_ip', '$nom', '$prenom')";
 	if (!$result = db_query($sql, $currentCourseID)) {
 		$tool_content .= $langErrorEnterPost;
 		draw($tool_content, 2, 'phpbb', $head_content);
@@ -171,21 +171,21 @@ if (isset($submit) && $submit) {
 		SET forum_posts = forum_posts+1, forum_topics = forum_topics+1, forum_last_post_id = $post_id
 		WHERE forum_id = '$forum'";
 	$result = db_query($sql, $currentCourseID);
-	
+
 	$topic = $topic_id;
 	$total_forum = get_total_topics($forum, $currentCourseID);
-	$total_topic = get_total_posts($topic, $currentCourseID, "topic")-1;  
+	$total_topic = get_total_posts($topic, $currentCourseID, "topic")-1;
 	// Subtract 1 because we want the nr of replies, not the nr of posts.
 	$forward = 1;
 
 	// --------------------------------
-	// notify users 
+	// notify users
 	// --------------------------------
 	$subject_notify = "$logo - $langNewForumNotify";
 	$category_id = forum_category($forum);
 	$cat_name = category_name($category_id);
-	$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
-			WHERE (forum_id = $forum OR cat_id = $category_id) 
+	$sql = db_query("SELECT DISTINCT user_id FROM forum_notify
+			WHERE (forum_id = $forum OR cat_id = $category_id)
 			AND notify_sent = 1 AND course_id = $cours_id", $mysqlMainDb);
 	$c = course_code_to_title($currentCourseID);
 	$body_topic_notify = "$langCourse: '$c'\n\n$langBodyForumNotify $langInForums '$forum_name' $langInCat '$cat_name' \n\n$gunet";
@@ -194,7 +194,7 @@ if (isset($submit) && $submit) {
 		send_mail('', '', '', $emailaddr, $subject_notify, $body_topic_notify, $charset);
 	}
 	// end of notification
-	
+
 	$tool_content .= "<table width='99%'><tbody>
 	<tr><td class='success'>
 	<p><b>$langStored</b></p>
@@ -202,7 +202,7 @@ if (isset($submit) && $submit) {
 	<p>$langClick <a href='viewforum.php?forum=$forum_id&amp;total_forum'>$langHere</a> $langReturnTopic</p>
 	</td>
 	</tr>
-	</tbody></table>"; 
+	</tbody></table>";
 } else {
 	if (!$uid AND !$fakeUid) {
 		$tool_content .= "<center><br /><br />
