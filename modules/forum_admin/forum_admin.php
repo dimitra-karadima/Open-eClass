@@ -84,7 +84,7 @@ hContent;
 if(isset($forumgo)) {
 	$nameTools = $langAdd;
 	$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
-	$result = db_query("SELECT forum_id, forum_name, forum_desc, forum_access, forum_moderator, forum_type 
+	$result = db_query("SELECT forum_id, forum_name, forum_desc, forum_access, forum_moderator, forum_type
 			FROM forums where cat_id='$cat_id'", $currentCourseID);
 	if ($result and mysql_num_rows($result) > 0) {
 		$tool_content .= "<form action=\"$_SERVER[PHP_SELF]?forumgoadd=yes&ctg=$ctg&cat_id=$cat_id\" method=post>
@@ -186,7 +186,7 @@ if(isset($forumgo)) {
 		$result = db_query("select cat_id, cat_title from catagories", $currentCourseID);
 		while(list($cat_id, $cat_title) = mysql_fetch_row($result)) {
 			if ($cat_id == $cat_id_1) {
-					$tool_content .= "<option value='$cat_id' selected>$cat_title</option>"; 
+					$tool_content .= "<option value='$cat_id' selected>$cat_title</option>";
 				} else {
 					$tool_content .= "<option value='$cat_id'>$cat_title</option>";
 				}
@@ -226,6 +226,12 @@ if(isset($forumgo)) {
 
 	// save forum category
 	elseif (isset($forumcatsave)) {
+    $cat_title = stripslashes( $cat_title );
+    $cat_title = mysql_real_escape_string( $cat_title );
+    $cat_title = htmlspecialchars( $cat_title );
+    $cat_id = stripslashes( $cat_id );
+    $cat_id = mysql_real_escape_string( $cat_id );
+    $cat_id = htmlspecialchars( $cat_id );
 		db_query("update catagories set cat_title='$cat_title' where cat_id='$cat_id'", $currentCourseID);
 		$tool_content .= "\n<p class=\"success_small\">$langNameCatMod<br /><a href=\"$_SERVER[PHP_SELF]?forumadmin=yes\">$langBack</a></p>";
 	}
@@ -233,6 +239,27 @@ if(isset($forumgo)) {
 	// forum go save
 	elseif(isset($forumgosave)) {
 		$nameTools = $langDelete;
+    $forum_moderator = stripslashes( $forum_moderator );
+    $forum_moderator = mysql_real_escape_string( $forum_moderator );
+    $forum_moderator = htmlspecialchars( $forum_moderator );
+    $currrentCourseID = stripslashes( $currrentCourseID );
+    $currrentCourseID = mysql_real_escape_string( $currrentCourseID );
+    $currrentCourseID = htmlspecialchars( $currrentCourseID );
+    $forum_name = stripslashes( $forum_name );
+    $forum_name = mysql_real_escape_string( $forum_name );
+    $forum_name = htmlspecialchars( $forum_name );
+    $forum_desc = stripslashes( $forum_desc );
+    $forum_desc = mysql_real_escape_string( $forum_desc );
+    $forum_desc = htmlspecialchars( $forum_desc );
+    $cat_id = stripslashes( $cat_id );
+    $cat_id = mysql_real_escape_string( $cat_id );
+    $cat_id = htmlspecialchars( $cat_id );
+    $forum_type = stripslashes( $forum_type );
+    $forum_type = mysql_real_escape_string( $forum_type );
+    $forum_type = htmlspecialchars( $forum_type );
+    $forum_id = stripslashes( $forum_id );
+    $forum_id = mysql_real_escape_string( $forum_id );
+    $forum_id = htmlspecialchars( $forum_id );
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
 		list($forum_moderator) = mysql_fetch_row($result);
@@ -246,6 +273,12 @@ if(isset($forumgo)) {
 
 	// forum add category
 	elseif(isset($forumcatadd)) {
+    $catagories = stripslashes( $catagories );
+    $catagories = mysql_real_escape_string( $catagories );
+    $catagories = htmlspecialchars( $catagories );
+    $currentCourseID = stripslashes( $currentCourseID );
+    $currentCourseID = mysql_real_escape_string( $currentCourseID );
+    $currentCourseID = htmlspecialchars( $currentCourseID );
 		db_query("INSERT INTO catagories VALUES (NULL, '$catagories', NULL)", $currentCourseID);
 		$tool_content .= "\n<p class='success_small'>$langCatAdded<br />
 		<a href='$_SERVER[PHP_SELF]?forumadmin=yes'>$langBack</a></p>";
@@ -254,6 +287,29 @@ if(isset($forumgo)) {
 	// forum go add
 	elseif(isset($forumgoadd)) {
 		$nameTools = $langAdd;
+    $forum_moderator = stripslashes( $forum_moderator );
+    $forum_moderator = mysql_real_escape_string( $forum_moderator );
+    $forum_moderator = htmlspecialchars( $forum_moderator );
+    $currentCourseID = stripslashes( $currentCourseID );
+    $currentCourseID = mysql_real_escape_string( $currentCourseID );
+    $currentCourseID = htmlspecialchars( $currentCourseID );
+    $forum_name = mysql_real_escape_string( $forum_name );
+    $forum_name = htmlspecialchars( $forum_name );
+    $forum_desc = stripslashes( $forum_desc );
+    $forum_desc = mysql_real_escape_string( $forum_desc );
+    $forum_desc = htmlspecialchars( $forum_desc );
+    $cat_id = stripslashes( $cat_id );
+    $cat_id = mysql_real_escape_string( $cat_id );
+    $cat_id = htmlspecialchars( $cat_id );
+    $forum_type = stripslashes( $forum_type );
+    $forum_type = mysql_real_escape_string( $forum_type );
+    $forum_type = htmlspecialchars( $forum_type );
+    $forum_id = stripslashes( $forum_id );
+    $forum_id = mysql_real_escape_string( $forum_id );
+    $forum_id = htmlspecialchars( $forum_id );
+    $cours_id = stripslashes( $cours_id );
+    $cours_id = mysql_real_escape_string( $cours_id );
+    $cours_id = htmlspecialchars( $cours_id );
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
 		list($forum_moderator) = mysql_fetch_row($result);
@@ -265,11 +321,11 @@ if(isset($forumgo)) {
 			$forid=$my_forum_id[0];
 		}
 		// --------------------------------
-		// notify users 
+		// notify users
 		// --------------------------------
 		$subject_notify = "$logo - $langCatNotify";
-		$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
-				WHERE (cat_id = $cat_id) 
+		$sql = db_query("SELECT DISTINCT user_id FROM forum_notify
+				WHERE (cat_id = $cat_id)
 				AND notify_sent = 1 AND course_id = $cours_id", $mysqlMainDb);
 		$body_topic_notify = "$langBodyCatNotify $langInCat '$ctg' \n\n$gunet";
 		while ($r = mysql_fetch_array($sql)) {
@@ -277,7 +333,7 @@ if(isset($forumgo)) {
 			send_mail('', '', '', $emailaddr, $subject_notify, $body_topic_notify, $charset);
 		}
 		// end of notification
-		
+
 		$tool_content .= "\n<p class='success_small'>$langForumCategoryAdded<br />
 		<a href='$_SERVER[PHP_SELF]?forumgo=yes&cat_id=$cat_id&ctg=$ctg'>$langBack</a></p>";
 	}
@@ -305,10 +361,19 @@ if(isset($forumgo)) {
 			<a href=\"$_SERVER[PHP_SELF]?forumgo=yes&ctg=$ctg&cat_id=$cat_id\">$langBack</a></p>";
 	} else {
 		if(isset($forumcatnotify)) { // modify forum category notification
-			$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
+      $cat_id = stripslashes( $cat_id );
+      $cat_id = mysql_real_escape_string( $cat_id );
+      $cat_id = htmlspecialchars( $cat_id );
+      $uid = stripslashes( $uid );
+      $uid = mysql_real_escape_string( $uid );
+      $uid = htmlspecialchars( $uid );
+      $cours_id = stripslashes( $cours_id );
+      $cours_id = mysql_real_escape_string( $cours_id );
+      $cours_id = htmlspecialchars( $cours_id );
+			$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify
 				WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id"));
 			if ($rows > 0) {
-				db_query("UPDATE forum_notify SET notify_sent = '$forumcatnotify' 
+				db_query("UPDATE forum_notify SET notify_sent = '$forumcatnotify'
 					WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id");
 			} else {
 				db_query("INSERT INTO forum_notify SET user_id = $uid,
@@ -328,7 +393,7 @@ if(isset($forumgo)) {
 		while(list($cat_id, $cat_title) = mysql_fetch_row($result)) {
 			$gets = db_query("SELECT COUNT(*) AS total FROM forums WHERE cat_id=$cat_id", $currentCourseID);
 			$numbers = mysql_fetch_array($gets);
-			list($forum_cat_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
+			list($forum_cat_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify
 				WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id", $mysqlMainDb));
 			if (!isset($forum_cat_action_notify)) {
 				$link_notify = FALSE;
@@ -337,6 +402,9 @@ if(isset($forumgo)) {
 				$link_notify = toggle_link($forum_cat_action_notify);
 				$icon = toggle_icon($forum_cat_action_notify);
 			}
+      $cat_title = stripslashes( $cat_title );
+      $cat_title = mysql_real_escape_string( $cat_title );
+      $cat_title = htmlspecialchars( $cat_title );
 			$tool_content .= "\n<tr class=\"odd\">\n<td><div align='right'>$i.</div></td>
       			<td><div align='left'>$cat_title &nbsp;</div></td>
       			<td><div align='center'>$numbers[total]</div></td>
@@ -346,7 +414,7 @@ if(isset($forumgo)) {
 			<img src='../../template/classic/img/edit.gif' border='0' title='$langModify'></img></a>&nbsp;
 			<a href='$_SERVER[PHP_SELF]?forumcatdel=yes&cat_id=$cat_id&ok=0' onClick='return confirmation();'>
 			<img src='../../template/classic/img/delete.gif' border='0' title='$langDelete'></img></a>
-			<a href='$_SERVER[PHP_SELF]?forumcatnotify=$link_notify&cat_id=$cat_id'>	
+			<a href='$_SERVER[PHP_SELF]?forumcatnotify=$link_notify&cat_id=$cat_id'>
 			<img src='../../template/classic/img/announcements$icon.gif' border='0' title='$langNotify'></img></a>
 			</td></tr>";
 			$i++;

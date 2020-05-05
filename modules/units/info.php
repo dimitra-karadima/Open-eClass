@@ -25,7 +25,7 @@
 * =========================================================================*/
 
 /*
-Units module	
+Units module
 */
 
 $require_current_course = true;
@@ -81,7 +81,7 @@ _editor_lang = '$lang_editor';
 <script type='text/javascript' src='$urlAppend/include/xinha/my_config.js'></script>";
 
 if (isset($_GET['edit'])) { // display form for editing course unit
-        $id = intval($_GET['edit']); 
+        $id = intval($_GET['edit']);
         $sql = db_query("SELECT id, title, comments FROM course_units WHERE id='$id'");
         $cu = mysql_fetch_array($sql);
         $unittitle = " value='" . htmlspecialchars($cu['title'], ENT_QUOTES) . "'";
@@ -112,4 +112,3 @@ $tool_content .= "<table width='99%' class='FormData' align='center'><tbody>
 </tbody></table>
 </form>";
 draw($tool_content, 2, 'units', $head_content);
-

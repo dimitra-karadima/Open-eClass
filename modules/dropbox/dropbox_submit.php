@@ -197,9 +197,12 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			//After uploading the file, create the db entries
 			if (!$error)
 			{
+				$description = stripslashes( $_POST['description'] );
+			  $description = mysql_real_escape_string( $description );
+			  $description = htmlspecialchars( $description );
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 				or die($dropbox_lang["uploadError"]);
-				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
+				new Dropbox_SentWork($uid, $dropbox_title, $description, $_POST['authors'], $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
 			}
 		}
 		chdir ($cwd);

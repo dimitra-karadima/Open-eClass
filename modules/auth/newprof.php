@@ -139,7 +139,24 @@ $registration_errors = array();
                                       break;
                     }
             }
-
+						$nom_form = stripslashes( $nom_form );
+					  $nom_form = mysql_real_escape_string( $nom_form );
+					  $nom_form = htmlspecialchars( $nom_form );
+						$prenom_form = stripslashes( $prenom_form );
+					  $prenom_form = mysql_real_escape_string( $prenom_form );
+					  $prenom_form = htmlspecialchars( $prenom_form );
+						$uname = stripslashes( $uname );
+					  $uname = mysql_real_escape_string( $uname );
+					  $uname = htmlspecialchars( $uname );
+						$email_form = stripslashes( $email_form );
+					  $email_form = mysql_real_escape_string( $email_form );
+					  $email_form = htmlspecialchars( $email_form );
+						$userphone = stripslashes( $userphone );
+					  $userphone = mysql_real_escape_string( $userphone );
+					  $userphone = htmlspecialchars( $userphone );
+						$usercomment = stripslashes( $usercomment );
+					  $usercomment = mysql_real_escape_string( $usercomment );
+					  $usercomment = htmlspecialchars( $usercomment );
             db_query('INSERT INTO prof_request SET
                                 profname = ' . autoquote($prenom_form). ',
                                 profsurname = ' . autoquote($nom_form). ',
