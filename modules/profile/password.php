@@ -82,10 +82,19 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 	if($old_pass == $old_pass_db) {
 
-		$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";
-		db_query($sql, $mysqlMainDb);
-		header("location:". $passurl."?msg=4");
-		exit();
+		if($_REQUEST['user_token'] == $_SESSION['session_token']){
+			$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";
+			$characters = '0123456789';
+    	$characters_length = strlen($characters);
+    	$output = '';
+    	for ($i = 0; $i < 41; $i++)
+        $output .= $characters[rand(0, $characters_length - 1)];
+
+			$_SESSION['session_token'] = $output;
+			db_query($sql, $mysqlMainDb);
+			header("location:". $passurl."?msg=4");
+			exit();
+		}
 	} else {
 		header("location:". $passurl."?msg=5");
 		exit();

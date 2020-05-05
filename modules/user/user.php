@@ -74,29 +74,29 @@ $tool_content = "";
 
 // IF PROF ONLY
 if ($is_adminOfCourse) {
-
-        // Handle user removal / status change
-        if (isset($_GET['giveAdmin'])) {
+        if($_REQUEST['user_token'] == $_SESSION['session_token']){
+          // Handle user removal / status change
+          if (isset($_GET['giveAdmin'])) {
                 $new_admin_gid = intval($_GET['giveAdmin']);
                 db_query("UPDATE cours_user SET statut = 1
                                 WHERE user_id = $new_admin_gid AND cours_id = $cours_id", $mysqlMainDb);
-        } elseif (isset($_GET['giveTutor'])) {
+          } elseif (isset($_GET['giveTutor'])) {
                 $new_tutor_gid = intval($_GET['giveTutor']);
                 db_query("UPDATE cours_user SET tutor = 1
                                 WHERE user_id = $new_tutor_gid AND cours_id = $cours_id", $mysqlMainDb);
                 db_query("DELETE FROM user_group WHERE user = $new_tutor_gid", $currentCourseID);
-        } elseif (isset($_GET['removeAdmin'])) {
+          } elseif (isset($_GET['removeAdmin'])) {
                 $removed_admin_gid = intval($_GET['removeAdmin']);
                 db_query("UPDATE cours_user SET statut = 5
                                 WHERE user_id <> $uid AND
                                       user_id = $removed_admin_gid AND
                                       cours_id = $cours_id", $mysqlMainDb);
-        } elseif (isset($_GET['removeTutor'])) {
+          } elseif (isset($_GET['removeTutor'])) {
                 $removed_tutor_gid = intval($_GET['removeTutor']);
                 db_query("UPDATE cours_user SET tutor = 0
                                 WHERE user_id = $removed_tutor_gid AND
                                       cours_id = $cours_id", $mysqlMainDb);
-        } elseif (isset($_GET['unregister'])) {
+          } elseif (isset($_GET['unregister'])) {
                 $unregister_gid = intval($_GET['unregister']);
                 $unregister_ok = true;
                 // Security: don't remove myself except if there is another prof
@@ -118,6 +118,13 @@ if ($is_adminOfCourse) {
                                         WHERE user = $unregister_gid", $currentCourseID);
                 }
         }
+        $characters = '0123456789';
+        $characters_length = strlen($characters);
+        $output = '';
+        for ($i = 0; $i < 41; $i++)
+            $output .= $characters[rand(0, $characters_length - 1)];
+
+    		$_SESSION['session_token'] = $output;
 
         // show help link and link to Add new user, search new user and management page of groups
 	$tool_content .= "<table width='99%' align='left' class='Users_Operations'><thead>
@@ -142,6 +149,7 @@ if ($is_adminOfCourse) {
 	</td>
 	</tr></tbody>
 	</table><p>&nbsp;</p>";
+  }
 
 }
 
@@ -342,7 +350,7 @@ if($countUser>=50) {
 	</form>
 	</td>
 	<td valign='bottom' align='center' width='20%'>";
-	
+
 	if ($startList!=0) {
 		$tool_content .= "
 		<form method='post' action='$_SERVER[PHP_SELF]?startList=$startList&amp;numbList=less'>
