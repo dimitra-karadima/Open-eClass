@@ -52,7 +52,7 @@ if (isset($close_user_registration) and $close_user_registration == TRUE) {
         draw($tool_content,0);
 	exit;
  }
- 
+
 $lang = langname_to_code($language);
 
 // display form
@@ -183,11 +183,11 @@ if (!isset($submit)) {
 				"$langManager $siteName \n$langTel $telephone \n" .
 				"$langEmail: $emailhelpdesk";
 		}
-	
+
 	send_mail('', '', '', $email, $emailsubject, $emailbody, $charset);
 	$registered_at = time();
 	$expires_at = time() + $durationAccount;  //$expires_at = time() + 31536000;
-	
+
 	// manage the store/encrypt process of password into database
 	$authmethods = array("2","3","4","5");
 	$uname = escapeSimple($uname);  // escape the characters: simple and double quote
@@ -197,6 +197,21 @@ if (!isset($submit)) {
 	} else {
 		$password_encrypted = $password;
 	}
+	$nom_form = stripslashes( $nom_form );
+  $nom_form = mysql_real_escape_string( $nom_form );
+  $nom_form = htmlspecialchars( $nom_form );
+	$prenom_form = stripslashes( $prenom_form );
+  $prenom_form = mysql_real_escape_string( $prenom_form );
+  $prenom_form = htmlspecialchars( $prenom_form );
+	$uname = stripslashes( $uname );
+  $uname = mysql_real_escape_string( $uname );
+  $uname = htmlspecialchars( $uname );
+	$email = stripslashes( $email );
+  $email = mysql_real_escape_string( $email );
+  $email = htmlspecialchars( $email );
+	$am = stripslashes( $am );
+  $am = mysql_real_escape_string( $am );
+  $am = htmlspecialchars( $am );
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
 	VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
@@ -216,7 +231,7 @@ if (!isset($submit)) {
 	$_SESSION['prenom'] = $prenom;
 	$_SESSION['nom'] = $nom;
 	$_SESSION['uname'] = $uname;
-	
+
 	// registration form
 	$tool_content .= "<table width='99%'><tbody><tr>" .
 			"<td class='well-done' height='60'>" .
@@ -231,7 +246,7 @@ if (!isset($submit)) {
 		foreach ($registration_errors as $error) {
 			$tool_content .= "<p>$error</p>";
 		}
-		$tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$_POST[prenom_form]&nom_form=$_POST[nom_form]&uname=$_POST[uname]&email=$_POST[email]&am=$_POST[am]'>$langAgain</a></p>" .
+		$tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form='".mysql_real_escape_string($_POST[prenom_form])."'&nom_form='".mysql_real_escape_string($_POST[nom_form])."'&uname='".mysql_real_escape_string($_POST[uname])."'&email='".mysql_real_escape_string($_POST[email])."'&am='".mysql_real_escape_string($_POST[am])."''>$langAgain</a></p>" .
 					"</td></tr></tbody></table><br /><br />";
 	}
 

@@ -82,7 +82,21 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
 		$langcode = langname_to_code($language);
 
-		$username_form = escapeSimple($username_form);
+    $nom_form = stripslashes( $nom_form );
+    $nom_form = mysql_real_escape_string( $nom_form );
+    $nom_form = htmlspecialchars( $nom_form );
+  	$prenom_form = stripslashes( $prenom_form );
+    $prenom_form = mysql_real_escape_string( $prenom_form );
+    $prenom_form = htmlspecialchars( $prenom_form );
+  	$username_form = stripslashes( $username_form );
+    $username_form = mysql_real_escape_string( $username_form );
+    $username_form = htmlspecialchars( $username_form );
+  	$email_form = stripslashes( $email_form );
+    $email_form = mysql_real_escape_string( $email_form );
+    $email_form = htmlspecialchars( $email_form );
+  	$am_form = stripslashes( $am_form );
+    $am_form = mysql_real_escape_string( $am_form );
+    $am_form = htmlspecialchars( $am_form );
 		if(mysql_query("UPDATE user
 	        SET nom='$nom_form', prenom='$prenom_form',
 	        username='$username_form', email='$email_form', am='$am_form',
@@ -104,7 +118,7 @@ if (isset($submit) && isset($ldap_submit) && ($ldap_submit == "ON")) {
 
 	mysql_query("UPDATE user SET perso = '$persoStatus',
 		lang = '$langcode' WHERE user_id='".$_SESSION["uid"]."' ");
-	
+
 	if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
 		unset($_SESSION['user_perso_active']);
 	}
@@ -229,7 +243,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	} else {
 		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
 	}
-	
+
 	$tool_content .= "</tr>
     <tr>
        <th class='left'>$langSurname</th>";

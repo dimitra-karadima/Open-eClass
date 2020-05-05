@@ -62,7 +62,7 @@ if ($submit)  {
 	}
 
 	// check if user name exists
-    	$username_check = db_query("SELECT username FROM `$mysqlMainDb`.user 
+    	$username_check = db_query("SELECT username FROM `$mysqlMainDb`.user
 			WHERE username=".autoquote($pu));
 	if (mysql_num_rows($username_check) > 0) {
 		$tool_content .= "<p class='caution_small'>$langUserFree</p><br><br><p align='right'>
@@ -88,6 +88,9 @@ if ($submit)  {
 	$registered_at = time();
         $expires_at = time() + $durationAccount;
 
+  $comment = stripslashes( $comment );
+  $comment = mysql_real_escape_string( $comment );
+  $comment = htmlspecialchars( $comment );
 	$sql = db_query("INSERT INTO `$mysqlMainDb`.user
 			(nom, prenom, username, password, email, statut, department,
 			am, registered_at, expires_at,lang)
@@ -98,7 +101,7 @@ if ($submit)  {
 			autoquote($pe) .
 			", 1, $department, " . autoquote($comment) . ", $registered_at, $expires_at, '$lang')");
 
-	//  Update table prof_request 
+	//  Update table prof_request
 	$rid = intval($_POST['rid']);
 	db_query("UPDATE prof_request set status = '2',date_closed = NOW() WHERE rid = '$rid'");
 		$emailbody = "$langDestination $pu $ps\n" .
@@ -126,11 +129,11 @@ if ($submit)  {
 	</td>
 	</tr></tbody></table>";
 
-} else { 
+} else {
 	// if not submit then display the form
 	if (isset($id)) { // if we come from prof request
-		$res = mysql_fetch_array(db_query("SELECT profname,profsurname, profuname, profemail, 
-			proftmima, comment, lang FROM prof_request WHERE rid='$id'"));
+		$res = mysql_fetch_array(db_query("SELECT profname,profsurname, profuname, profemail,
+			proftmima, comment, lang FROM prof_request WHERE rid='".mysql_real_escape_string($id)."'"));
 		$ps = $res['profsurname'];
 		$pn = $res['profname'];
 		$pu = $res['profuname'];

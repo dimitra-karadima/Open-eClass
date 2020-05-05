@@ -215,7 +215,7 @@ function show_submission($sid)
 	$nameTools = $langWorks;
 	$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 
-	if ($sub = mysql_fetch_array(db_query("SELECT * FROM assignment_submit WHERE id = '$sid'"))) {
+	if ($sub = mysql_fetch_array(db_query("SELECT * FROM assignment_submit WHERE id =  '".mysql_real_escape_string($_GET['$sid'])."'"))) {
 
 		$tool_content .= "<p>$langSubmissionDescr".
 		uid_to_name($sub['uid']).
@@ -236,7 +236,21 @@ function show_submission($sid)
 function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 {
 	global $tool_content, $workPath;
-
+  $title = stripslashes( $title );
+  $title = mysql_real_escape_string( $title );
+  $title = htmlspecialchars( $title );
+	$comments = stripslashes( $comments );
+  $comments = mysql_real_escape_string( $comments );
+  $comments = htmlspecialchars( $comments );
+	$desc = stripslashes( $desc );
+  $desc = mysql_real_escape_string( $desc );
+  $desc = htmlspecialchars( $desc );
+	$deadline = stripslashes( $deadline );
+  $deadline = mysql_real_escape_string( $deadline );
+  $deadline = htmlspecialchars( $deadline );
+	$group_submissions = stripslashes( $group_submissions );
+  $group_submissions = mysql_real_escape_string( $group_submissions );
+  $group_submissions = htmlspecialchars( $group_submissions );
 	$secret = uniqid("");
 	db_query("INSERT INTO assignments
 		(title, description, comments, deadline, submission_date, secret_directory,
@@ -314,6 +328,9 @@ function submit_work($id) {
 	if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
 		$msg2 = "$langUploadSuccess";//to message
 		$group_id = user_group($uid, FALSE);
+    $stud_comments = stripslashes( $stud_comments );
+    $stud_comments = mysql_real_escape_string( $stud_comments );
+    $stud_comments = htmlspecialchars( $stud_comments );
 		if ($group_sub == 'yes' and !was_submitted(-1, $group_id, $id)) {
 			delete_submissions_by_uid(-1, $group_id, $id);
 			db_query("INSERT INTO assignment_submit
@@ -440,7 +457,7 @@ function show_edit_assignment($id)
 	global $urlAppend;
 	global $end_cal_Work_db;
 
-	$res = db_query("SELECT * FROM assignments WHERE id = '$id'");
+	$res = db_query("SELECT * FROM assignments WHERE id = '".mysql_real_escape_string($_GET['$id'])."'");
 	$row = mysql_fetch_array($res);
 
 	$nav[] = array("url"=>"work.php", "name"=> $langWorks);
@@ -528,11 +545,26 @@ function edit_assignment($id)
 	$nav[] = array("url"=>"work.php", "name"=> $langWorks);
 	$nav[] = array("url"=>"work.php?id=$id", "name"=> $_POST['title']);
 
-	if (db_query("UPDATE assignments SET title=".autoquote($_POST['title']).",
-		description=".autoquote($_POST['desc']).", group_submissions=".autoquote($_POST['group_submissions']).",
-		comments=".autoquote($_POST['comments']).", deadline=".autoquote($_POST['WorkEnd'])." WHERE id='$id'")) {
+  $desc = stripslashes( $_POST['desc'] );
+  $desc = mysql_real_escape_string( $desc );
+  $desc = htmlspecialchars( $desc );
+	$title = stripslashes( $_POST['title'] );
+  $title = mysql_real_escape_string( $title );
+  $title = htmlspecialchars( $title );
+	$group_submissions = stripslashes( $_POST['group_submissions'] );
+  $group_submissions = mysql_real_escape_string( $group_submissions );
+  $group_submissions = htmlspecialchars( $group_submissions );
+	$comments = stripslashes( $_POST['comments'] );
+  $comments = mysql_real_escape_string( $comments );
+  $comments = htmlspecialchars( $comments );
+	$WorkEnd = stripslashes( $_POST['WorkEnd'] );
+  $WorkEnd = mysql_real_escape_string( $WorkEnd );
+  $WorkEnd = htmlspecialchars( $WorkEnd );
+	if (db_query("UPDATE assignments SET title=".autoquote($title).",
+		description=".autoquote($desc).", group_submissions=".autoquote($group_submissions).",
+		comments=".autoquote($comments).", deadline=".autoquote($WorkEnd)." WHERE id='$id'")) {
 
-        $title = autounquote($_POST['title']);
+        $title = autounquote($title);
 	$tool_content .="<p class='success_small'>$langEditSuccess<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
 	} else {
 	$tool_content .="<p class='caution_small'>$langEditError<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
@@ -768,7 +800,7 @@ function show_assignment($id, $message = FALSE)
 	global $langEndDeadline, $langWEndDeadline, $langNEndDeadline, $langDays, $langDaysLeft, $langGradeOk;
 	global $currentCourseID, $webDir, $urlServer, $nameTools, $langGraphResults, $m;
 
-	$res = db_query("SELECT *, (TO_DAYS(deadline) - TO_DAYS(NOW())) AS days FROM assignments WHERE id = '$id'");
+	$res = db_query("SELECT *, (TO_DAYS(deadline) - TO_DAYS(NOW())) AS days FROM assignments WHERE id = '".mysql_real_escape_string($_GET['$id'])."'");
 	$row = mysql_fetch_array($res);
 
 	$nav[] = array("url"=>"work.php", "name"=> $langWorks);
@@ -800,18 +832,18 @@ function show_assignment($id, $message = FALSE)
 	$result = db_query("SELECT *
 		FROM `$GLOBALS[code_cours]`.assignment_submit AS assign,
 		`$mysqlMainDb`.user AS user
-		WHERE assign.assignment_id='$id' AND user.user_id = assign.uid
+		WHERE assign.assignment_id='".mysql_real_escape_string($_GET['$id'])."' AND user.user_id = assign.uid
 		ORDER BY $order $rev");
 
-	/*  The query is changed (AND assign.grade<>'' is appended) in order to constract the chart of 
+	/*  The query is changed (AND assign.grade<>'' is appended) in order to constract the chart of
 	 * grades distribution according to the graded works only (works that are not graded are omitted). */
 	$numOfResults = db_query("SELECT *
 		FROM `$GLOBALS[code_cours]`.assignment_submit AS assign,
 		`$mysqlMainDb`.user AS user
-		WHERE assign.assignment_id='$id' AND user.user_id = assign.uid AND assign.grade<>''
+		WHERE assign.assignment_id='".mysql_real_escape_string($_GET['$id'])."' AND user.user_id = assign.uid AND assign.grade<>''
 		ORDER BY $order $rev");
 	$num_resultsForChart = mysql_num_rows($numOfResults);
-	
+
 	$num_results = mysql_num_rows($result);
 	if ($num_results > 0) {
 		if ($num_results == 1) {
@@ -1174,12 +1206,24 @@ function submit_grade_comments($id, $sid, $grade, $comment)
 
 	$stupid_user = 0;
 
-	/*  If check expression is changed by nikos, in order to give to teacher the ability to 
+	/*  If check expression is changed by nikos, in order to give to teacher the ability to
 	 * assign comments to a work without assigning grade. */
 	if (!is_numeric($grade) && '' != $grade ) {
 		$tool_content .= $langWorkWrongInput;
 		$stupid_user = 1;
 	} else {
+    $grade = stripslashes( $grade );
+    $grade = mysql_real_escape_string( $grade );
+    $grade = htmlspecialchars( $grade );
+  	$comment = stripslashes( $comment );
+    $comment = mysql_real_escape_string( $comment );
+    $comment = htmlspecialchars( $comment );
+  	$REMOTE_ADDR = stripslashes( $REMOTE_ADDR );
+    $REMOTE_ADDR = mysql_real_escape_string( $REMOTE_ADDR );
+    $REMOTE_ADDR = htmlspecialchars( $REMOTE_ADDR );
+  	$sid = stripslashes( $sid );
+    $sid = mysql_real_escape_string( $sid );
+    $sid = htmlspecialchars( $sid );
 		db_query("UPDATE assignment_submit SET grade='$grade', grade_comments='$comment',
 		grade_submission_date=NOW(), grade_submission_ip='$REMOTE_ADDR'
 		WHERE id = '$sid'");
